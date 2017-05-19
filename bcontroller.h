@@ -6,9 +6,20 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#define SERVER_ADDR "192.168.12.134"
-#define SERVER_PORT 14706
+typedef struct {
+	double position;
+	double velocity;
+	double angle;
+	double angular_v;
+} DataSet;
+
+extern int Socket;
 
 int Connect(const char* server_addr, const int server_port);
+int Disconnect();
+int getSensorInfos(const DataSet* data);
+int moveLeft();
+int moveRight();
+int stop();
 
 #endif // _BCONTROLLER_H_
