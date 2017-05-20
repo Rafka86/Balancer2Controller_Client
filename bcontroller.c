@@ -1,51 +1,44 @@
+#include <stdio.h>			//printf, fprintf, perror
+#include <stdlib.h>			//atoi, exit, EXIT_FAILURE, EXIT_SUCCESS
+#include <string.h>			//memset
+#include <sys/socket.h>	//socket, connect, recv
+#include <arpa/inet.h>	//struct sockaddr_in, struct_sockaddr, inet_ntoa, inet_aton
+#include <unistd.h>			//close
+#include <netdb.h>			//hostent, gethostbyname
+
 #include "bcontroller.h"
 
-void client(int fd)
-{
-  char buf[BUFSIZE];
-  int n;
+#define SOCK_INIT -1
 
-  while (fgets(buf, BUFSIZE, stdin) != NULL)
-  {
-    n = strlen(buf);
-    buf[n - 1] = '\0';
-    if (write(fd, buf, n) <= 0) return;
-    if (read(fd, buf, n) <= 0) return;
-    printf("%s\n", buf);
-  }
+int Socket = SOCK_INIT;
+
+int error(const char* sentence) {
+	perror(sentence);
+	return EXIT_FAILURE;
 }
 
-void error(char *s)
-{
-  perror(s);
-  exit(1);
-}
+int Connect(const char* addr, const int port) {
+	if (Socket != SOCK_INIT) return error("Already made a socket.\n");
 
-int main(int argc, char **argv)
-{
-  int sockfd;
-  struct sockaddr_in sin;
+	Socket = socket(AF_INET, SOCK_STREAM, 0);
+	if (Socket < 0) return error("Cannot create socket.\n");
 
-  if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
-    error("cannot create socket");
+	struct sockaddr_in serverSockAddr;
+	memset(&serverSockAddr, 0, sizeof(servSockAddr));
+	serverSockAddr.sin_family = AF_INET;
+	serverSockAddr.sin_addr.s_addr = inet_addr(addr);
+	if (serverSockAddr.sin_addr.s_addr < 0) {
+		struct hostent *host;
+		host = gethostbyname(addr);
+		if (host == NULL) return error("Cannot solve host name.\n");
+		serverSockAddr.sin_addr.s_addr = *(unsigned int *)host->h_addr_list[0];
+	}
+	if (port < 10000) return error("Not recommended port number.\n");
+	serverSockAddr.sin_port = htons(port);
 
-  bzero((char *)&sin, sizeof(sin));
-  sin.sin_family = PF_INET;
-  sin.sin_addr.s_addr = inet_addr(SERVER_ADDR);
-  sin.sin_port = htons(SERVER_PORT);
-  if (connect(sockfd, (struct sockaddr *)&sin, sizeof(sin)) < 0)
-    error("cannot connect");
-	
-	char buf[BUFSIZE];
-	printf("Connected.\n");
-  //if (write(sockfd, "Hello.", BUFSIZE) <= 0) error("cannot write");
-  if (read(sockfd, buf, BUFSIZE) <= 0) error("cannot read");
-	printf("%s\n", buf);
+	int stat = connect(Socket, (struct sockaddr*)&serverSockAddr, sizeof(serverSockAddr));
+	if (stat < 0) return error("Cannot connect to host.\n");
 
-  if (shutdown(sockfd, SHUT_RDWR) < 0)
-    error("cannot shutdown");
-  close(sockfd);
-	printf("Disconnected.\n");
-
-  return 0;
+	fprintf(stderr, "Connect to %s.\tPort : %d\n", addr, port);
+	return 0;
 }

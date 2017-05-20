@@ -1,11 +1,6 @@
 #ifndef _BCONTROLLER_H_
 #define _BCONTROLLER_H_
 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-
 typedef struct {
 	double position;
 	double velocity;

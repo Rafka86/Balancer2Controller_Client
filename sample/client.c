@@ -1,6 +1,11 @@
-#include "inet.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+
+#include "private.h"
+
 #define BUFSIZE 1024
 
 void client(int fd)
