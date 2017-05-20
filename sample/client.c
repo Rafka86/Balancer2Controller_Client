@@ -9,45 +9,45 @@
 
 #define BUFSIZE 1024
 
-void client(int fd) {
-  char buf[BUFSIZE];
-  int n;
-
-  while (fgets(buf, BUFSIZE, stdin) != NULL) {
-    n = strlen(buf);
-    buf[n - 1] = '\0';
-    if (write(fd, buf, n) <= 0) return;
-    if (read(fd, buf, n) <= 0) return;
-    printf("%s\n", buf);
-  }
-}
-
-void error(char *s) {
+void error_e(const char *s) {
   perror(s);
   exit(1);
 }
 
+void client() {
+	DataSet set;
+  char buf[BUFSIZE];
+  int n;
+
+	printf("Command : get mover movel stop\n");
+  while (fgets(buf, BUFSIZE, stdin) != NULL) {
+    n = strlen(buf);
+    buf[n - 1] = '\0';
+    
+		if (strcmp(buf, "get") == 0) {
+			if (GetSensorInfos(&set)) error_e("Faild communication.");
+		} else if (strcmp(buf, "mover") == 0) {
+			if (MoveRight()) error_e("Faild communication.");
+		} else if (strcmp(buf, "movel") == 0) {
+			if (MoveLeft()) error_e("Faild communication.");
+		} else if (strcmp(buf, "stop") == 0) {
+			if (Stop()) error_e("Faild communication.");
+		} else {
+			fprintf(stderr, "Undefined command.\n");
+			return;
+		}
+
+		printf("Command : get mover movel stop\n");
+  }
+}
+
 int main(int argc, char **argv) {
-  int sockfd;
-  struct sockaddr_in sin;
-
-  if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
-    error("cannot create socket");
-
-  bzero((char *)&sin, sizeof(sin));
-  sin.sin_family = PF_INET;
-  sin.sin_addr.s_addr = inet_addr(SERVER_ADDR);
-  sin.sin_port = htons(SERVER_PORT);
-  if (connect(sockfd, (struct sockaddr *)&sin, sizeof(sin)) < 0)
-    error("cannot connect");
-	
-	char buf[BUFSIZE];
+  if (Connect(SERVER_ADDR, SERVER_PORT)) error_e("Cannot connect.");
 	printf("Connected.\n");
-	client()
+	
+	client();
 
-  if (shutdown(sockfd, SHUT_RDWR) < 0)
-    error("cannot shutdown");
-  close(sockfd);
+  if (Disconnect()) error_e("cannot shutdown");
 	printf("Disconnected.\n");
 
   return 0;

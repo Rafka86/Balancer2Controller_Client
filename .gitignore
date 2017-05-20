@@ -1,3 +1,7 @@
+# Exe file
+echo
+client
+
 # Prerequisites
 *.d
 

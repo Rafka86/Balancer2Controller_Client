@@ -8,13 +8,11 @@ typedef struct {
 	double angular_v;
 } DataSet;
 
-extern int Socket;
-
 int Connect(const char* server_addr, const int server_port);
 int Disconnect();
-int getSensorInfos(const DataSet* data);
-int moveLeft();
-int moveRight();
-int stop();
+int GetSensorInfos(const DataSet* data);
+int MoveLeft();
+int MoveRight();
+int Stop();
 
 #endif // _BCONTROLLER_H_
