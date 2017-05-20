@@ -10,19 +10,19 @@
 #define BUFSIZE 1024
 
 void error_e(const char *s) {
-  perror(s);
-  exit(1);
+	perror(s);
+	exit(1);
 }
 
 void client() {
 	DataSet set;
-  char buf[BUFSIZE];
-  int n;
+	char buf[BUFSIZE];
+	int n;
 
 	printf("Command : get mover movel stop\n");
-  while (fgets(buf, BUFSIZE, stdin) != NULL) {
-    n = strlen(buf);
-    buf[n - 1] = '\0';
+	while (fgets(buf, BUFSIZE, stdin) != NULL) {
+		n = strlen(buf);
+		buf[n - 1] = '\0';
     
 		if (strcmp(buf, "get") == 0) {
 			if (GetSensorInfos(&set)) error_e("Faild communication.");
@@ -38,17 +38,17 @@ void client() {
 		}
 
 		printf("Command : get mover movel stop\n");
-  }
+	}
 }
 
 int main(int argc, char **argv) {
-  if (Connect(SERVER_ADDR, SERVER_PORT)) error_e("Cannot connect.");
+	if (Connect(SERVER_ADDR, SERVER_PORT)) error_e("Cannot connect.");
 	printf("Connected.\n");
-	
+
 	client();
 
-  if (Disconnect()) error_e("cannot shutdown");
+	if (Disconnect()) error_e("cannot shutdown");
 	printf("Disconnected.\n");
 
-  return 0;
+	return 0;
 }
