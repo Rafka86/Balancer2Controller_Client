@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
+#include "private.h"
+#include "lib/packet.h"
+
+int service(int fd) {
+  Packet p;
+	int n;
+
+  if ( (n = recv(fd, &p, sizeof(p), 0)) <= 0 )
+    return 0;
+	
+	switch (p.com) {
+		case GET: printf("Command : Get.\tn=%d\n", n); break;
+		case MVR: printf("Command : Move Right.\tn=%d\n", n); break;
+		case MVL: printf("Command : Move Left.\tn=%d\n", n); break;
+		case STP: printf("Command : Stop.\tn=%d\n", n); break;
+	}
+
+	if ( send(fd, (char*)&p, sizeof(p), 0) <= 0 )
+		return 0;
+
+  return n;
+}
+
+void error(const char *s) {
+  perror(s);
+  exit(1);
+}
+
+int main(int argc, char **argv) {
+  int sockfd, newfd;
+  struct sockaddr_in sin, cli;
+  socklen_t clilen;
+
+  if ( (sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0 )
+    error("cannot create socket");
+
+  bzero((char *)&sin, sizeof(sin));
+  sin.sin_family = PF_INET;
+  sin.sin_addr.s_addr = htonl(INADDR_ANY);
+  sin.sin_port = htons(SERVER_PORT);
+  if ( bind(sockfd, (struct sockaddr *)&sin, sizeof(sin)) < 0 )
+    error("cannot bind");
+  if ( listen(sockfd, 5) < 0 )
+    error("cannot listen");
+
+	clilen = sizeof(cli);
+  printf("Accepting connection\n");
+  if ( (newfd = accept(sockfd, (struct sockaddr *)&cli, &clilen)) < 0 )
+    error("cannot accept");
+  printf("Connection estabiished\n");
+  
+	while ( service(newfd) != 0 );
+  printf("Connection closed\n");
+
+	if ( shutdown(newfd, SHUT_RDWR) < 0 )
+    error("cannot shutdown");
+  
+	close(newfd);
+  close(sockfd);
+  return 0;
+}
