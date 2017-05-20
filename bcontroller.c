@@ -61,8 +61,12 @@ int GetSensorInfos(const DataSet* set) {
 
 	p.com = GET;
 	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
+
 	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild recv packet.");
-	printf("Receive informations.\n");
+	set->position  = p.data[0];
+	set->velocity  = p.data[1];
+	set->angle     = p.data[2];
+	set->angular_v = p.data[3];
 
 	return 0;
 }
