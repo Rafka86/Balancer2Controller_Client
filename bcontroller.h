@@ -10,7 +10,7 @@ typedef struct {
 
 int Connect(const char* server_addr, const int server_port);
 int Disconnect();
-int GetSensorInfos(const DataSet* data);
+int GetSensorInfos(DataSet* data);
 int MoveLeft();
 int MoveRight();
 int Stop();

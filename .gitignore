@@ -1,6 +1,7 @@
 # Exe file
 echo
 client
+keycontrol
 
 # Prerequisites
 *.d

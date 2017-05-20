@@ -1,4 +1,4 @@
-SRCS := client.c echo.c
+SRCS := client.c echo.c keycontrol.c
 PROGS := $(SRCS:.c=)
 
 CC := gcc

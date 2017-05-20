@@ -54,7 +54,7 @@ int Disconnect() {
 	return 0;
 }
 
-int GetSensorInfos(const DataSet* set) {
+int GetSensorInfos(DataSet* set) {
 	if (Socket == SOCK_INIT) return error("Socket has not created yet.");
 
 	Packet p;
