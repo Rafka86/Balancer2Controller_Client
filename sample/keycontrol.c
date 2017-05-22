@@ -56,13 +56,18 @@ Key getPressedKey() {
 }
 
 void control() {
+	Key old = UNKNOWN;
 	while (1) {
 		if (kbhit()) {
-			switch (getPressedKey()) {
-				case LEFT: printf("Pressed left.\n"); break;
-				case RIGHT: printf("Pressed right.\n"); break;
-				default: return;
+			Key now = getPressedKey();
+			if (old != now) {
+				switch (now) {
+					case LEFT: MoveLeft(); break;
+					case RIGHT: MoveRight(); break;
+					default: Stop(); return;
+				}
 			}
+			old = now;
 		}
 	}
 }

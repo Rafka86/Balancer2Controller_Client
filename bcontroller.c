@@ -78,8 +78,7 @@ int MoveRight() {
 
 	p.com = MVR;
 	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	printf("Receive feedback.\n");
+	fprintf(stderr, "Sending message : Move right.\n");
 
 	return 0;
 }
@@ -91,8 +90,7 @@ int MoveLeft() {
 
 	p.com = MVL;
 	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	printf("Receive feedback.\n");
+	fprintf(stderr, "Sending message : Move left.\n");
 
 	return 0;
 }
@@ -104,8 +102,7 @@ int Stop() {
 
 	p.com = STP;
 	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	printf("Receive feedback.\n");
+	fprintf(stderr, "Sending message : Move stop.\n");
 
 	return 0;
 }
