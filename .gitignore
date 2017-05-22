@@ -2,6 +2,7 @@
 echo
 client
 keycontrol
+pidcontrol
 
 # Prerequisites
 *.d
