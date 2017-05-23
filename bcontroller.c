@@ -71,28 +71,25 @@ int GetSensorInfos(DataSet* set) {
 	return 0;
 }
 
-int MoveRight() {
+int Move(const double spd) {
 	if (Socket == SOCK_INIT) return error("Socket has not created yet.");
 
 	Packet p;
 
-	p.com = MVR;
+	p.com = MOV;
+	p.data[0] = spd;
 	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	fprintf(stderr, "Sending message : Move right.\n");
+	fprintf(stderr, "Sending message : Move. SPEED = %f\n", spd);
 
 	return 0;
 }
 
+int MoveRight() {
+	return Move(-MV_SPD);
+}
+
 int MoveLeft() {
-	if (Socket == SOCK_INIT) return error("Socket has not created yet.");
-
-	Packet p;
-
-	p.com = MVL;
-	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	fprintf(stderr, "Sending message : Move left.\n");
-
-	return 0;
+	return Move(MV_SPD);
 }
 
 int Stop() {

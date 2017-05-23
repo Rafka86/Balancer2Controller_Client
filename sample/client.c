@@ -26,6 +26,10 @@ void client() {
     
 		if (strcmp(buf, "get") == 0) {
 			if (GetSensorInfos(&set)) error_e("Faild communication.");
+			printf("position:%lf\n", set.position);
+			printf("velocity:%lf\n", set.velocity);
+			printf("angle:%lf\n", set.angle);
+			printf("angular_v:%lf\n", set.angular_v);
 		} else if (strcmp(buf, "mover") == 0) {
 			if (MoveRight()) error_e("Faild communication.");
 		} else if (strcmp(buf, "movel") == 0) {

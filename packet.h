@@ -3,8 +3,7 @@
 
 typedef enum {
 	GET,
-	MVR,
-	MVL,
+	MOV,
 	STP
 } Command;
 #define MAX_DATA_SIZE 4
