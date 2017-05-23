@@ -19,8 +19,7 @@ int service(int fd) {
 	
 	switch (p.com) {
 		case GET: printf("Command : Get.\tn=%d\n", n); break;
-		case MVR: printf("Command : Move Right.\tn=%d\n", n); break;
-		case MVL: printf("Command : Move Left.\tn=%d\n", n); break;
+		case MOV: printf("Command : Move %s.\tn=%d\n", (p.data[0] < 0.0) ? "Right" : "Left", n); break;
 		case STP: printf("Command : Stop.\tn=%d\n", n); break;
 	}
 
