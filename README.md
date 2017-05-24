@@ -13,3 +13,6 @@ Linuxから制御用のSDKを利用するプログラムを作成することは
 と
 [サーバープログラム](https://github.com/Rafka86/Balancer2Controller_Server)
 で連携して動作するように作成した。
+連携はソケット通信で行う。イメージ図は以下の様な感じ。
+![schematic_balancer2controller](http://firemiller.net/img/bb2.png)
+
