@@ -25,4 +25,25 @@ Linuxから制御用のSDKを利用するプログラムを作成することは
 将来的には共有ライブラリの形で利用できるように
 インストールを行うMakefileを作成する予定です。
 
+## 構成
+
+ライブラリを構成するファイルは以下の3つです。
+<dl>
+	<dt>bcontroller.h</dt>
+		<dd>各機能を担う関数と、センサの情報格納用の構造体を宣言している。</dd>
+	<dt>bcontroller.c</dt>
+		<dd>各関数の実装を行っているソースファイル。</dd>
+	<dt>packet.h</dt>
+		<dd>通信に使用するパケット構造体を宣言している。</dd>
+</dl>
+
+## 機能
+
+Clientとして利用できる関数を紹介していきます。
+
+### Connect関数
+
+```c:bcontroller.h
+int Connect(const char* addr, const int port);
+```
 
