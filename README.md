@@ -43,9 +43,9 @@ Clientとして利用できる関数を紹介していきます。
 
 ### Connect関数
 
-```c:bcontroller.h
+```c
 int Connect(const char* addr, const int port);
 ```
 * 引数
-	```const char* addr```
-		**Server**が実行されているマシンのIPアドレス(IPv4)
+	- `const char* addr` : **Server**が実行されているマシンのIPアドレス(IPv4)
+	- `const int port` : **Server**がListenしているポート番号
