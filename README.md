@@ -47,14 +47,15 @@ Clientとして利用できる関数を紹介していきます。
 int Connect(const char* addr, const int port);
 ```
 
-サーバーと接続を試みる関数です。
+ソケットを作成し、サーバーとの接続を試みる関数です。
 失敗した場合はその原因を標準エラー出力に出力します。
+接続の成否を戻り値として返します。
 
 * 引数
 	- `const char* addr` : **Server**が実行されているマシンのIPアドレス(IPv4)
 	- `const int port` : **Server**がListenしているポート番号
 * 戻り値
-	- 接続の可否を示す値。
+	- 接続の成否を示す値。
 		接続に失敗した場合は`EXIT_FAILURE`、成功した場合は`EXIT_SUCCESS`が返される。
 
 ### Disconnect関数
@@ -63,11 +64,54 @@ int Connect(const char* addr, const int port);
 int Disconnect();
 ```
 
+サーバーとの接続を切断し、ソケットを破棄する関数です。
+失敗した場合はその原因を標準エラー出力に出力します。
+切断の成否を戻り値として返します。
+
+* 戻り値
+	- 切断の成否を示す値。
+		切断に失敗した場合は`EXIT_FAILURE`、成功した場合は`EXIT_SUCCESS`が返される。
+
 ### GetSensorInfos関数
 
 ```c
 int GetSensorInfos(DataSet* data);
 ```
+
+ビュートバランサー2の各種センサーのデータを取得することを試みます。
+通信に失敗した場合はその原因を標準エラー出力に出力します。
+通信の成否は戻り値として返されます。
+取得したデータはDataSet構造体に格納されます。
+この構造体は以下の様に定義されています。
+
+```c
+typedef struct {
+	double position;
+	double velocity;
+	double angle;
+	double angular_v;
+} DataSet;
+```
+
+構造体の各メンバーには以下の様な値が格納されます。
+<dl>
+	<dt>position</dt>
+		<dd>ビュートバランサーの位置[mm]</dd>
+	<dt>velocity</dt>
+		<dd>ビューとバランサーの速度[mm/s]</dd>
+	<dt>angle</dt>
+		<dd>本体角度[rad]</dd>
+	<dt>anglular_v</dt>
+		<dd>本体角速度[rad/s]</dd>
+</dl>
+
+この関数自体の引数と戻り値の意味は以下の通りです。
+
+* 引数
+	- `DataSet* data` : センサーの情報を格納する変数のポインタ
+* 戻り値
+	- 通信の成否を示す値。
+		通信に失敗した場合は`EXIT_FAILURE`、成功した場合は`EXIT_SUCCESS`が返される。
 
 ### Move関数
 
