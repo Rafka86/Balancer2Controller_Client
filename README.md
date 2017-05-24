@@ -46,6 +46,14 @@ Clientとして利用できる関数を紹介していきます。
 ```c
 int Connect(const char* addr, const int port);
 ```
+
+サーバーと接続を試みる関数です。
+失敗した場合はその原因を標準エラー出力に出力します。
+
 * 引数
 	- `const char* addr` : **Server**が実行されているマシンのIPアドレス(IPv4)
 	- `const int port` : **Server**がListenしているポート番号
+* 戻り値
+	- 接続の可否を示す値。
+		接続に失敗した場合は`EXIT_FAILURE`、成功した場合は`EXIT_SUCCESS`が返される。
+
