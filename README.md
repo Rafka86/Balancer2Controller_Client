@@ -57,3 +57,38 @@ int Connect(const char* addr, const int port);
 	- 接続の可否を示す値。
 		接続に失敗した場合は`EXIT_FAILURE`、成功した場合は`EXIT_SUCCESS`が返される。
 
+### Disconnect関数
+
+```c
+int Disconnect();
+```
+
+### GetSensorInfos関数
+
+```c
+int GetSensorInfos(DataSet* data);
+```
+
+### Move関数
+
+```c
+int Move(Const double spd);
+```
+
+### MoveLeft関数
+
+```c
+int MoveLeft();
+```
+
+### MoveRight関数
+
+```c
+int MoveRight();
+```
+
+### Stop関数
+
+```c
+int Stop();
+```
