@@ -1,14 +1,15 @@
 #ifndef _PACKET_H_
 #define _PACKET_H_
 
-typedef enum {
+enum Command {
 	GET,
 	MOV,
-	STP
-} Command;
+	STP,
+	RST
+};
 #define MAX_DATA_SIZE 4
 typedef struct {
-	Command com;
+	int com;
 	double data[MAX_DATA_SIZE];
 } Packet;
 

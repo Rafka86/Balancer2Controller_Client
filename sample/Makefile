@@ -7,7 +7,7 @@ CFLAGS := -Wall
 .PHONY: all
 all: $(PROGS)
 
-$(PROGS): private.h ../bcontroller.c
+$(PROGS): ../bcontroller.c
 
 .PHONY: clean
 clean:
