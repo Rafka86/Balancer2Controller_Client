@@ -41,21 +41,21 @@ int Connect(const char* addr, const int port) {
 	if (stat < 0) return error("Cannot connect to host.");
 
 	fprintf(stderr, "Connect to %s.\tPort : %d\n", addr, port);
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 int Disconnect() {
-	if (Socket == SOCK_INIT) return error("Socket has not created yet.");
+	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
 
 	close(Socket);
 	fprintf(stderr, "Connection closed.\n");
 	Socket = SOCK_INIT;
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 int GetSensorInfos(DataSet* set) {
-	if (Socket == SOCK_INIT) return error("Socket has not created yet.");
+	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
 
 	Packet p;
 
@@ -68,11 +68,11 @@ int GetSensorInfos(DataSet* set) {
 	set->angle     = p.data[2];
 	set->angular_v = p.data[3];
 
-	return 0;
+	return p.com == GET ? EXIT_SUCCESS : TURNOVER;
 }
 
 int Move(const double spd) {
-	if (Socket == SOCK_INIT) return error("Socket has not created yet.");
+	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
 
 	Packet p;
 
@@ -81,7 +81,7 @@ int Move(const double spd) {
 	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
 	fprintf(stderr, "Sending message : Move. SPEED = %f\n", spd);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 int MoveRight() {
@@ -93,7 +93,7 @@ int MoveLeft() {
 }
 
 int Stop() {
-	if (Socket == SOCK_INIT) return error("Socket has not created yet.");
+	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
 
 	Packet p;
 
@@ -101,5 +101,17 @@ int Stop() {
 	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
 	fprintf(stderr, "Sending message : Move stop.\n");
 
-	return 0;
+	return EXIT_SUCCESS;
+}
+
+int Reset() {
+	if (Socket == SOCK_INIT) return error("Socket has not created ");
+
+	Packet p;
+
+	p.com = RST;
+	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
+	fprintf(stderr, "Sending message : Reset.\n");
+
+	return EXIT_SUCCESS;
 }

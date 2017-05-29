@@ -57,7 +57,22 @@ Key getPressedKey() {
 
 void control() {
 	Key old = UNKNOWN;
+	//DataSet data;
+
 	while (1) {
+		/*int stat = GetSensorInfos(&data);
+		if (stat == EXIT_FAILURE) return;
+		else if (stat == TURNOVER) {
+			fprintf(stderr, "Balancer is turn over.\n");
+			fprintf(stderr, "Retry? (y/n) : ");
+			char ans;
+			if (kbhit()) ans = getchar();
+			if (ans == 'y') {
+				if (Reset()) return;
+			} else {
+				if (MoveRight()) return;
+			}
+		}*/
 		if (kbhit()) {
 			Key now = getPressedKey();
 			if (old != now) {

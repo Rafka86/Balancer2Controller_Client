@@ -1,6 +1,7 @@
 #ifndef _BCONTROLLER_H_
 #define _BCONTROLLER_H_
 
+#define TURNOVER 2
 #define MV_SPD 500.0
 
 typedef struct {
@@ -17,5 +18,6 @@ int Move(const double spd);
 int MoveLeft();
 int MoveRight();
 int Stop();
+int Reset();
 
 #endif // _BCONTROLLER_H_
