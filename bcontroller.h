@@ -2,7 +2,7 @@
 #define _BCONTROLLER_H_
 
 #define TURNOVER 2
-#define MV_SPD 500.0
+#define MV_SPD 5000.0
 
 typedef struct {
 	double position;

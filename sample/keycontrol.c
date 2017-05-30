@@ -11,6 +11,9 @@
 typedef enum {
 	LEFT,
 	RIGHT,
+	ML,
+	MR,
+	RETRY,
 	UNKNOWN
 } Key;
 
@@ -51,38 +54,25 @@ Key getPressedKey() {
 					break;
 			}
 			break;
+		case 'r': return RETRY;
+		case 'a': return ML;
+		case 'd': return MR;
 	}
 	return UNKNOWN;
 }
 
 void control() {
-	Key old = UNKNOWN;
-	//DataSet data;
-
 	while (1) {
-		/*int stat = GetSensorInfos(&data);
-		if (stat == EXIT_FAILURE) return;
-		else if (stat == TURNOVER) {
-			fprintf(stderr, "Balancer is turn over.\n");
-			fprintf(stderr, "Retry? (y/n) : ");
-			char ans;
-			if (kbhit()) ans = getchar();
-			if (ans == 'y') {
-				if (Reset()) return;
-			} else {
-				if (MoveRight()) return;
-			}
-		}*/
 		if (kbhit()) {
 			Key now = getPressedKey();
-			if (old != now) {
-				switch (now) {
-					case LEFT: MoveLeft(); break;
-					case RIGHT: MoveRight(); break;
-					default: Stop(); return;
-				}
+			switch (now) {
+				case LEFT: MoveLeft(); break;
+				case ML: Move(10000); break;
+				case MR: Move(-10000); break;
+				case RIGHT: MoveRight(); break;
+				case RETRY: Reset(); break;
+				default: Stop(); return;
 			}
-			old = now;
 		}
 	}
 }
