@@ -47,8 +47,8 @@ int Connect(const char* addr, const int port) {
 int Disconnect() {
 	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
 
-	close(Socket);
-	fprintf(stderr, "Connection closed.\n");
+	if (close(Socket)) return error("Socket closing failed.");
+	else fprintf(stderr, "Connection closed.\n");
 	Socket = SOCK_INIT;
 
 	return EXIT_SUCCESS;
