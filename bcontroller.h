@@ -11,7 +11,7 @@ typedef struct {
 	double angular_v;
 } DataSet;
 
-int Connect(const char* server_addr, const int server_port);
+int Connect(const char* server_addr, const unsigned short server_port);
 int Disconnect();
 int GetSensorInfos(DataSet* data);
 int Move(const double spd);

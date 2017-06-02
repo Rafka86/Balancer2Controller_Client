@@ -18,7 +18,7 @@ int error(const char* sentence) {
 	return EXIT_FAILURE;
 }
 
-int Connect(const char* addr, const int port) {
+int Connect(const char* addr, const unsigned short port) {
 	if (Socket != SOCK_INIT) return error("Already made a socket.");
 
 	Socket = socket(AF_INET, SOCK_STREAM, 0);
