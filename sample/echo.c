@@ -21,11 +21,14 @@ int service(int fd) {
 		case GET: printf("Command : Get.\tn=%d\n", n); break;
 		case MOV: printf("Command : Move %s.\tn=%d\n", (p.data[0] < 0.0) ? "Right" : "Left", n); break;
 		case STP: printf("Command : Stop.\tn=%d\n", n); break;
+		case RST: printf("Command : Reset.\tn=%d\n", n); break;
 	}
-
-	if ( send(fd, (char*)&p, sizeof(p), 0) <= 0 )
-		return 0;
-	printf("Sending message.\n");
+	
+	if (p.com == GET) {
+		if ( send(fd, (char*)&p, sizeof(p), 0) <= 0 )
+			return 0;
+		printf("Sending message.\n");
+	}
 
   return n;
 }
