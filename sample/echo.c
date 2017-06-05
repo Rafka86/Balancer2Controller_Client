@@ -21,6 +21,7 @@ int service(int fd) {
 		case GET: printf("Command : Get.\tn=%d\n", n); break;
 		case MOV: printf("Command : Move %s.\tn=%d\n", (p.data[0] < 0.0) ? "Right" : "Left", n); break;
 		case STP: printf("Command : Stop.\tn=%d\n", n); break;
+		case RST: printf("Command : Reset.\tn=%d\n", n); break;
 	}
 	
 	if (p.com == GET) {
