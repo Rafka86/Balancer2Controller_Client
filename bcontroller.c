@@ -71,7 +71,7 @@ int GetSensorInfos(DataSet* set) {
 	do {
 		memcpy(&fd, &readfd, sizeof(fd_set));
 		if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	} while (select(Socket + 1, &readfd, NULL, NULL, &timeout) == 0);
+	} while (select(Socket + 1, &fd, NULL, NULL, &timeout) == 0);
 	fprintf(stderr, "Sent.\n");
 
 	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild recv packet.");
