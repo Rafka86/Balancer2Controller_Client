@@ -10,6 +10,7 @@
 #include "packet.h"
 
 #define SOCK_INIT -1
+#define WAIT_LIM 10000	//us
 
 int Socket = SOCK_INIT;
 
@@ -28,12 +29,12 @@ int Connect(const char* addr, const unsigned short port) {
 	memset(&serverSockAddr, 0, sizeof(serverSockAddr));
 	serverSockAddr.sin_family = AF_INET;
 	serverSockAddr.sin_addr.s_addr = inet_addr(addr);
-	if (serverSockAddr.sin_addr.s_addr < 0) {
+	/*if (serverSockAddr.sin_addr.s_addr < 0) {
 		struct hostent *host;
 		host = gethostbyname(addr);
 		if (host == NULL) return error("Cannot solve host name.");
 		serverSockAddr.sin_addr.s_addr = *(unsigned int *)host->h_addr_list[0];
-	}
+	}*/
 	if (port < 10000) return error("Not recommended port number.");
 	serverSockAddr.sin_port = htons(port);
 
@@ -57,12 +58,24 @@ int Disconnect() {
 int GetSensorInfos(DataSet* set) {
 	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
 
+	struct timeval timeout;
 	Packet p;
 
 	p.com = GET;
-	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
+	timeout.tv_sec = 0;
+	timeout.tv_usec = WAIT_LIM;
+
+	fd_set fd, readfd;
+	FD_SET(Socket, &readfd);
+
+	do {
+		memcpy(&fd, &readfd, sizeof(fd_set));
+		if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
+	} while (select(Socket + 1, &readfd, NULL, NULL, &timeout) == 0);
+	fprintf(stderr, "Sent.\n");
 
 	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild recv packet.");
+	fprintf(stderr, "Received.\n");
 	set->position  = p.data[0];
 	set->velocity  = p.data[1];
 	set->angle     = p.data[2];
