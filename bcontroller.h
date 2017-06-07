@@ -6,6 +6,7 @@
 #define MV_SPD 5.0
 
 typedef struct {
+	int time_stamp;
 	double position;
 	double velocity;
 	double angle;

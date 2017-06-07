@@ -9,7 +9,7 @@ enum Command {
 };
 #define MAX_DATA_SIZE 4
 typedef struct {
-	int com;
+	int com, t_stamp;
 	double data[MAX_DATA_SIZE];
 } Packet;
 

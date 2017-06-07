@@ -57,4 +57,5 @@ Module.symvers
 Mkfile.old
 dkms.conf
 sample/bin/*
+private
 private.*
