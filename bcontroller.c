@@ -10,7 +10,7 @@
 #include "packet.h"
 
 #define SOCK_INIT -1
-#define WAIT_LIM 10000	//us
+#define WAIT_LIM 5			//s
 
 int Socket = SOCK_INIT;
 
@@ -62,20 +62,18 @@ int GetSensorInfos(DataSet* set) {
 	Packet p;
 
 	p.com = GET;
-	timeout.tv_sec = 0;
-	timeout.tv_usec = WAIT_LIM;
+	timeout.tv_sec = WAIT_LIM;
+	timeout.tv_usec = 0;
 
-	fd_set fd, readfd;
+	fd_set readfd;
 	FD_SET(Socket, &readfd);
 
-	do {
-		memcpy(&fd, &readfd, sizeof(fd_set));
-		if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	} while (select(Socket + 1, &fd, NULL, NULL, &timeout) == 0);
-	fprintf(stderr, "Sent.\n");
+	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
+	if (select(Socket + 1, &readfd, NULL, NULL, &timeout) == 0) return PACKET_LOST;
+	//fprintf(stderr, "Sent.\n");
 
 	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild recv packet.");
-	fprintf(stderr, "Received.\n");
+	//fprintf(stderr, "Received.\n");
 	set->position  = p.data[0];
 	set->velocity  = p.data[1];
 	set->angle     = p.data[2];

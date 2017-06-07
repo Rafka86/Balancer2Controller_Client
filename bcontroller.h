@@ -1,6 +1,7 @@
 #ifndef _BCONTROLLER_H_
 #define _BCONTROLLER_H_
 
+#define PACKET_LOST 3
 #define TURNOVER 2
 #define MV_SPD 5.0
 
