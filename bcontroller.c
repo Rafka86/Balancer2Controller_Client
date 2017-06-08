@@ -74,11 +74,12 @@ int GetSensorInfos(DataSet* set) {
 
 	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild recv packet.");
 	//fprintf(stderr, "Received.\n");
-	set->time_stamp = p.t_stamp;
+	set->count      = p.count;
 	set->position   = p.data[0];
 	set->velocity   = p.data[1];
 	set->angle      = p.data[2];
 	set->angular_v  = p.data[3];
+	set->time_stamp = p.data[4];
 
 	return p.com == GET ? EXIT_SUCCESS : TURNOVER;
 }

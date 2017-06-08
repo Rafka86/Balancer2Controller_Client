@@ -6,11 +6,12 @@
 #define MV_SPD 5.0
 
 typedef struct {
-	int time_stamp;
+	int count;
 	double position;
 	double velocity;
 	double angle;
 	double angular_v;
+	double time_stamp;
 } DataSet;
 
 int Connect(const char* server_addr, const unsigned short server_port);

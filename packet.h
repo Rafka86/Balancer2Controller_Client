@@ -7,9 +7,9 @@ enum Command {
 	STP,
 	RST
 };
-#define MAX_DATA_SIZE 4
+#define MAX_DATA_SIZE 5
 typedef struct {
-	int com, t_stamp;
+	int com, count;
 	double data[MAX_DATA_SIZE];
 } Packet;
 
