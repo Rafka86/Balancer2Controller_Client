@@ -1,130 +1,88 @@
 #include <stdio.h>			//printf, fprintf, perror
 #include <stdlib.h>			//atoi, exit, EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>			//memset
-#include <sys/socket.h>	//socket, connect, recv
-#include <arpa/inet.h>	//struct sockaddr_in, struct_sockaddr, inet_ntoa, inet_aton
-#include <unistd.h>			//close
-#include <netdb.h>			//hostent, gethostbyname
+#include <math.h>
+#include <bb2d.h>
 
-#include "bcontroller.h"
-#include "packet.h"
+#include "bb2c4rl.h"
 
-#define SOCK_INIT -1
-#define WAIT_LIM 5			//s
+#define ADDR_COUNT 120
+#define ADDR_TIME  128
+#define ADDR_POS   136
+#define ADDR_VEL   144
+#define ADDR_ANGLE 152
+#define ADDR_ANG_V 160
 
-int Socket = SOCK_INIT;
+#define READ_SIZE 48
+#define READ_FROM ADDR_COUNT
 
-int error(const char* sentence) {
+#define ADDR_TARGET_SPD 168
+
+#define ANGLE_LIMIT_DEGREE 15.0
+#define ANGLE_LIMIT        (ANGLE_LIMIT_DEGREE * M_PI / 180.0)
+
+int bb2c4rl_error(const char* sentence) {
 	perror(sentence);
 	return EXIT_FAILURE;
 }
 
-int Connect(const char* addr, const unsigned short port) {
-	if (Socket != SOCK_INIT) return error("Already made a socket.");
+int Connect() {
+  int res = BB2D_Init();
+	if (res) return bb2c4rl_error("BB2Driver Init Error.");
 
-	Socket = socket(AF_INET, SOCK_STREAM, 0);
-	if (Socket < 0) return error("Cannot create socket.");
+  res = BB2D_Connect();
+	if (res) return bb2c4rl_error("BB2Driver Connect Error.");
 
-	struct sockaddr_in serverSockAddr;
-	memset(&serverSockAddr, 0, sizeof(serverSockAddr));
-	serverSockAddr.sin_family = AF_INET;
-	serverSockAddr.sin_addr.s_addr = inet_addr(addr);
-	/*if (serverSockAddr.sin_addr.s_addr < 0) {
-		struct hostent *host;
-		host = gethostbyname(addr);
-		if (host == NULL) return error("Cannot solve host name.");
-		serverSockAddr.sin_addr.s_addr = *(unsigned int *)host->h_addr_list[0];
-	}*/
-	if (port < 10000) return error("Not recommended port number.");
-	serverSockAddr.sin_port = htons(port);
-
-	int stat = connect(Socket, (struct sockaddr*)&serverSockAddr, sizeof(serverSockAddr));
-	if (stat < 0) return error("Cannot connect to host.");
-
-	fprintf(stderr, "Connect to %s.\tPort : %d\n", addr, port);
 	return EXIT_SUCCESS;
 }
 
 int Disconnect() {
-	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
+  int res = BB2D_Disconnect();
+	if (res) return bb2c4rl_error("BB2Driver Disconnect Error.");
 
-	if (close(Socket)) return error("Socket closing failed.");
-	else fprintf(stderr, "Connection closed.\n");
-	Socket = SOCK_INIT;
+  res = BB2D_Exit();
+	if (res) return bb2c4rl_error("BB2Driver Exit Error.");
 
 	return EXIT_SUCCESS;
 }
 
 int GetSensorInfos(DataSet* set) {
-	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
+  int res = BB2D_Read(READ_FROM, READ_SIZE);
+  if (res) return bb2c4rl_error("BB2Driver Read Error.");
 
-	struct timeval timeout;
-	Packet p;
+	set->count     = (int)BB2D_GetDouble(ADDR_COUNT);
+	set->time      =      BB2D_GetDouble(ADDR_TIME);
+	set->position  =      BB2D_GetDouble(ADDR_POS);
+	set->velocity  =      BB2D_GetDouble(ADDR_VEL);
+	set->angle     =      BB2D_GetDouble(ADDR_ANGLE);
+	set->angular_v =      BB2D_GetDouble(ADDR_ANG_V);
 
-	p.com = GET;
-	timeout.tv_sec = WAIT_LIM;
-	timeout.tv_usec = 0;
-
-	fd_set readfd;
-	FD_SET(Socket, &readfd);
-
-	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	if (select(Socket + 1, &readfd, NULL, NULL, &timeout) == 0) return PACKET_LOST;
-	//fprintf(stderr, "Sent.\n");
-
-	if (recv(Socket, &p, sizeof(p), 0) <= 0) return error("Faild recv packet.");
-	//fprintf(stderr, "Received.\n");
-	set->count      = p.count;
-	set->position   = p.data[0];
-	set->velocity   = p.data[1];
-	set->angle      = p.data[2];
-	set->angular_v  = p.data[3];
-	set->time_stamp = p.data[4];
-
-	return p.com == GET ? EXIT_SUCCESS : TURNOVER;
-}
-
-int Move(const double spd) {
-	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
-
-	Packet p;
-
-	p.com = MOV;
-	p.data[0] = spd;
-	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	fprintf(stderr, "Sending message : Move. SPEED = %f\n", spd);
+  if (set->angle < -ANGLE_LIMIT || ANGLE_LIMIT < set->angle) return TURNOVER;
 
 	return EXIT_SUCCESS;
 }
 
-int MoveRight() {
-	return Move(-MV_SPD);
+int Move(const double spd) {
+  int res = BB2D_WriteDouble(ADDR_TARGET_SPD, spd);
+  if (res) return bb2c4rl_error("BB2Driver Write Error.");
+
+	return EXIT_SUCCESS;
 }
 
-int MoveLeft() {
-	return Move(MV_SPD);
+int MoveRight(const double spd) {
+	return Move(-spd);
+}
+
+int MoveLeft(const double spd) {
+	return Move(spd);
 }
 
 int Stop() {
-	if (Socket == SOCK_INIT) return error("Socket has not been created yet.");
-
-	Packet p;
-
-	p.com = STP;
-	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	fprintf(stderr, "Sending message : Move stop.\n");
+  int res = BB2D_WriteDouble(ADDR_TARGET_SPD, 0.0);
+  if (res) return bb2c4rl_error("BB2Driver Write Error.");
 
 	return EXIT_SUCCESS;
 }
 
 int Reset() {
-	if (Socket == SOCK_INIT) return error("Socket has not created ");
-
-	Packet p;
-
-	p.com = RST;
-	if (send(Socket, &p, sizeof(p), 0) <= 0) return error("Faild send packet.");
-	fprintf(stderr, "Sending message : Reset.\n");
-
 	return EXIT_SUCCESS;
 }
