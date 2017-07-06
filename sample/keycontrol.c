@@ -4,9 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "private.h"
-#include "lib/bcontroller.h"
-#include "lib/packet.h"
+#include "lib/bb2c4rl.h"
 
 typedef enum {
 	LEFT,
@@ -61,15 +59,16 @@ Key getPressedKey() {
 	return UNKNOWN;
 }
 
+#define MV_SPD 300.0
 void control() {
 	while (1) {
 		if (kbhit()) {
 			Key now = getPressedKey();
 			switch (now) {
-				case LEFT: MoveLeft(); break;
-				case ML: Move(10000); break;
-				case MR: Move(-10000); break;
-				case RIGHT: MoveRight(); break;
+				case LEFT: MoveLeft(MV_SPD); break;
+				case ML: MoveLeft(MV_SPD * 2.0); break;
+				case MR: MoveRight(MV_SPD * 2.0); break;
+				case RIGHT: MoveRight(MV_SPD); break;
 				case RETRY: Reset(); break;
 				default: Stop(); return;
 			}
@@ -78,7 +77,7 @@ void control() {
 }
 
 int main() {
-	if (Connect(SERVER_ADDR, SERVER_PORT)) return EXIT_FAILURE;
+	if (Connect()) return EXIT_FAILURE;
 
 	control();
 

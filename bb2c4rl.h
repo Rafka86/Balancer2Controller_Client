@@ -1,6 +1,8 @@
 #ifndef _BB2C4RL_H_
 #define _BB2C4RL_H_
 
+#define TURNOVER 2
+
 typedef struct {
 	int count;
 	double time;
